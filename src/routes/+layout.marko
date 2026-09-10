@@ -8,24 +8,26 @@
     <title>${$global.meta.pageTitle || "Marko"}</title>
   </head>
   <body>
+  <Header/>
     <${input.content}/>
   </body>
 </html>
 
 <style>
-  html,
-  body {
-    font-family: system-ui;
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    color: #fff;
-    background: #15151e;
-  }
-  code {
-    color: #fc0;
-  }
-  a {
-    color: #09c;
-  }
+@import "tailwindcss";
+
+/* 1. Definición de la fuente */
+@font-face {
+      font-family: 'Departure Mono';
+        src: url('/fonts/DepartureMono-Regular.woff2') format('woff2');
+          font-weight: 400;
+            font-style: normal;
+              font-display: swap;
+}
+
+/* 2. Registro en el tema de Tailwind CSS v4 */
+@theme {
+      --font-sans: 'Departure Mono', monospace;
+}
+
 </style>

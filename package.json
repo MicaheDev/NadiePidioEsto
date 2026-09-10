@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "marko": "^6.3.42"
+    "@tailwindcss/vite": "^4.3.3",
+    "marko": "^6.3.42",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@marko/run": "^0.11.12"
