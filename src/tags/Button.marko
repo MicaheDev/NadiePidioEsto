@@ -1,0 +1,19 @@
+export interface Input {
+    callback: () => void;
+    content?: Marko.Body
+    class?: string
+    type?: 'button' | 'submit' | 'reset'
+}
+
+<div class=["bg-black", {'w-full': input.class?.includes('w-full')}]>
+    <button
+        class=["bg-white border-2 px-2 -translate-y-1 hover:translate-y-0 active:translate-y-0 select-none cursor-pointer", input.class]
+        onClick() {
+            input.callback();
+        }
+        type=input.type
+    >
+       <${input.content}/>
+
+    </button>
+</div>

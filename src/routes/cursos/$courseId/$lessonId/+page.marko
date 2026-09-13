@@ -1,0 +1,50 @@
+import { getLessonData } from "../../../../lib/markdown.js";
+
+<!-- $global.params te da acceso a las variables de la ruta en Marko Run / Router -->
+<const/courseId=$global.params.courseId>
+<const/lessonId=$global.params.lessonId>
+
+<const/getEmbedUrl=(url: any) => {
+    if (!url) return "";
+    // Convierte https://www.youtube.com/watch?v=dQw4w9WgXcQ -> https://www.youtube.com/embed/dQw4w9WgXcQ
+    // Convierte https://youtu.be/dQw4w9WgXcQ -> https://www.youtube.com/embed/dQw4w9WgXcQ
+    const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11
+        ? `https://www.youtube.com/embed/${match[2]}`
+        : url;
+}>
+
+<await|lesson|=getLessonData(courseId, lessonId)>
+    <div class="w-full h-full flex overflow-hidden ">
+        <!-- BARRA LATERAL / NAVEGACIÓN -->
+        <aside class="w-[250px] p-4 bg-gray-100 border-r border-black">
+            <h3>Navegación del Curso</h3>
+            <ul>
+                <li>
+                    <a href=`/cursos/${courseId}/clase-1`>1. Introducción</a>
+                </li>
+                <li><a href=`/cursos/${courseId}/clase-2`>2. Instalación</a></li>
+            </ul>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 p-4 overflow-y-auto">
+            <h1>${lesson.metadata.title}</h1>
+            <!-- Si la clase tiene un vídeo asignado en el frontmatter -->
+            <if=lesson.metadata.videoUrl>
+                    <iframe
+                    class="w-full aspect-video"
+                        src=getEmbedUrl(lesson.metadata.videoUrl)
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    />
+            </if>
+            <!-- CUERPO DE LA CLASE EN MARKDOWN (RENDERIZADO) -->
+            <article class="prose">$!{lesson.htmlContent}</article>
+        </main>
+    </div>
+</await>
+

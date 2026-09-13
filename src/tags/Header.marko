@@ -1,25 +1,44 @@
-<let/isMenuOpen=false/>
-
-<div class=["fixed z-10 inset-0 w-full h-full bg-white -translate-x-full opacity-0 transition-all duration-300", {
-    "translate-x-0 opacity-100": isMenuOpen,
-    "-translate-x-full opacity-0": !isMenuOpen
-}]>
-<header class="w-full h-[60px] px-4 flex items-center justify-between bg-white">
-<h2>Menu</h2>
-<div class="bg-black">
-<button class="bg-white border-2 px-2 -translate-y-1 hover:translate-y-0 active:translate-y-0 select-none" onClick() {isMenuOpen = false}>${"Cerrar [✕]"}</button>
+<let/isMenuOpen=false>
+<div class=[
+  "fixed z-10 inset-0 w-full h-full bg-white -translate-x-full transition-transform duration-300",
+  {
+    "translate-x-0": isMenuOpen,
+  },
+]>
+  <div
+    aria-label="menu-header"
+    class="w-full h-[60px] px-4 flex items-center justify-between bg-white"
+  >
+    <h2>Menu</h2>
+    <div class="bg-black">
+      <Button
+        class="w-full"
+        callback() {
+          isMenuOpen = false;
+        }
+      >
+        Cerrar [✕]
+      </Button>
+    </div>
+  </div>
+  <div class="px-4">
+    <h2 class="text-2xl">Cursos</h2>
+    <h2 class="text-2xl">Tutoriales</h2>
+  </div>
 </div>
+<header
+  aria-label="main-header"
+  class="w-full h-[60px] shrink-0 px-4 flex items-center justify-between bg-white border-b-2 border-black"
+>
+  <h1 class="font-black">${"<NadiePidioEsto>"}</h1>
+  <div class="bg-black">
+    <Button
+      class="w-full"
+      callback() {
+        isMenuOpen = true;
+      }
+    >
+      Menu [≡]
+    </Button>
+  </div>
 </header>
-<div class="px-4">
-<h2 class="text-2xl">Cursos</h2>
-<h2 class="text-2xl">Tutoriales</h2>
-
-</div>
-</div>
-<header class="w-full h-[60px] px-4 flex items-center justify-between bg-white border-b-2 border-black">
-<h1 class="font-black">${"<NadiePidioEsto>"}</h1>
-<div class="bg-black">
-<button class="bg-white border-2 px-2 -translate-y-1 hover:translate-y-0 active:translate-y-0 select-none" onClick() {isMenuOpen = true}>Menu [≡]</button>
-</div>
-</header>
-
