@@ -3,6 +3,7 @@ import { getLessonData } from "../../../../lib/markdown.js";
 <!-- $global.params te da acceso a las variables de la ruta en Marko Run / Router -->
 <const/courseId=$global.params.courseId>
 <const/lessonId=$global.params.lessonId>
+<let/isContentOpen=false/>
 
 <const/getEmbedUrl=(url: any) => {
     if (!url) return "";
@@ -19,7 +20,10 @@ import { getLessonData } from "../../../../lib/markdown.js";
 <await|lesson|=getLessonData(courseId, lessonId)>
     <div class="w-full h-full flex overflow-hidden ">
         <!-- BARRA LATERAL / NAVEGACIÓN -->
-        <aside class="w-[250px] p-4 bg-gray-100 border-r border-black">
+        <aside class=["w-full h-full fixed z-6 bg-white translate-x-full transition-transform duration-300 p-4", {
+            'translate-x-0': isContentOpen,
+            'translate-x-full': !isContentOpen
+        }]>
             <h3>Navegación del Curso</h3>
             <ul>
                 <li>
@@ -28,6 +32,11 @@ import { getLessonData } from "../../../../lib/markdown.js";
                 <li><a href=`/cursos/${courseId}/clase-2`>2. Instalación</a></li>
             </ul>
         </aside>
+
+
+        <Button class="fixed z-8 bottom-10 right-10" callback() {isContentOpen = !isContentOpen}>
+           Contenido [╪]
+        </Button>
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="flex-1 p-4 overflow-y-auto">
