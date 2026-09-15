@@ -1,0 +1,25 @@
+<const/type = $global.params.type/>
+<const/slug = $global.params.slug/>
+<const/lessons = ($global.lessonsList || [])/>
+
+<div class="p-4">
+  <h1 class="text-2xl font-bold mb-4 capitalize">${slug.replace(/-/g, " ")}</h1>
+  
+  <if=(lessons.length > 0)>
+    <ul class="space-y-2">
+      <for|item| of=lessons>
+        <li>
+          <a 
+            href=`/${type}/${slug}/${item}` 
+            class="text-blue-600 hover:underline font-medium capitalize"
+          >
+            ${item.replace(/-/g, " ")}
+          </a>
+        </li>
+      </for>
+    </ul>
+  </if>
+  <else>
+    <p>No se encontraron lecciones en este apartado.</p>
+  </else>
+</div>

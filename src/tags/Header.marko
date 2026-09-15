@@ -1,6 +1,6 @@
-import { getCollectionList } from "@/lib/markdown.js";
+import { getGlobalNav } from "@/lib/nav.js";
 
-<let/isMenuOpen=false/>
+<let/isMenuOpen = false/>
 
 <div class=[
   "fixed z-10 inset-0 w-full h-full bg-white -translate-x-full transition-transform duration-300 overflow-y-auto",
@@ -26,12 +26,12 @@ import { getCollectionList } from "@/lib/markdown.js";
   </div>
 
   <div class="p-4 space-y-6">
-    <!-- SECCIÓN DE CURSOS -->
-    <div>
-      <h2 class="text-2xl font-black mb-2">Cursos</h2>
-      <await|courses|=getCollectionList("courses")>
+    <await|navData|=getGlobalNav()>
+      <!-- SECCIÓN DE CURSOS -->
+      <div>
+        <h2 class="text-2xl font-black mb-2">Cursos</h2>
         <ul class="space-y-1 pl-2">
-          <for|course| of=courses>
+          <for|course| of=(navData.courses || [])>
             <li>
               <a 
                 href=`/courses/${course}` 
@@ -43,15 +43,13 @@ import { getCollectionList } from "@/lib/markdown.js";
             </li>
           </for>
         </ul>
-      </await>
-    </div>
+      </div>
 
-    <!-- SECCIÓN DE TUTORIALES -->
-    <div>
-      <h2 class="text-2xl font-black mb-2">Tutoriales</h2>
-      <await|tutorials|=getCollectionList("tutorials")>
+      <!-- SECCIÓN DE TUTORIALES -->
+      <div>
+        <h2 class="text-2xl font-black mb-2">Tutoriales</h2>
         <ul class="space-y-1 pl-2">
-          <for|tutorial| of=tutorials>
+          <for|tutorial| of=(navData.tutorials || [])>
             <li>
               <a 
                 href=`/tutorials/${tutorial}` 
@@ -63,8 +61,8 @@ import { getCollectionList } from "@/lib/markdown.js";
             </li>
           </for>
         </ul>
-      </await>
-    </div>
+      </div>
+    </await>
   </div>
 </div>
 

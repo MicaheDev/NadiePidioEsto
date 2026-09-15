@@ -10,9 +10,34 @@ import rehypeStarryNight from 'rehype-starry-night';
 import rehypeStringify from 'rehype-stringify';
 import fauxRemarkEmbedder from '@remark-embedder/core';
 import fauxOembedTransformer from '@remark-embedder/transformer-oembed';
+import { visit } from 'unist-util-visit';
 
 const remarkEmbedder = fauxRemarkEmbedder.default;
 const oembedTransformer = fauxOembedTransformer.default;
+
+/**
+ * Plugin de Rehype para reescribir las rutas de las imágenes relativas
+ * @param {Object} options - Contiene contentType y slug
+ */
+function rehypeRewriteImagePaths(options) {
+  const { contentType, slug } = options;
+  return (tree) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'img' && node.properties && node.properties.src) {
+        const src = node.properties.src;
+        // Si no es una URL externa ni absoluta, reescribe la ruta
+        const isExternal = src.startsWith('http://') || src.startsWith('https://') || src.startsWith('//');
+        const isAbsolute = src.startsWith('/');
+
+        if (!isExternal && !isAbsolute) {
+          // Limpia la ruta por si viene con './'
+          const cleanSrc = src.replace(/^\.\//, '');
+          node.properties.src = `/content/src/content/${contentType}/${slug}/${cleanSrc}`;
+        }
+      }
+    });
+  };
+}
 
 /**
  * Obtiene el contenido HTML y metadatos de una lección específica.
@@ -35,11 +60,13 @@ export async function getLessonData(contentType, slug, lessonId) {
     .use(remarkEmbedder, { transformers: [oembedTransformer] })
     // 4. Transformar el AST de Markdown (Remark) a HTML (Rehype)
     .use(remarkRehype, { allowDangerousHtml: true })
-    // 5. Transformar bloques de código con syntax highlighting
+    // 5. Reescribir rutas de imágenes relativas para vite-plugin-static-copy
+    .use(rehypeRewriteImagePaths, { contentType, slug })
+    // 6. Transformar bloques de código con syntax highlighting
     .use(rehypeStarryNight)
-    // 6. Convertir bloques math a KaTeX (HTML)
+    // 7. Convertir bloques math a KaTeX (HTML)
     .use(rehypeKatex)
-    // 7. Generar HTML final en string
+    // 8. Generar HTML final en string
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdownContent);
 

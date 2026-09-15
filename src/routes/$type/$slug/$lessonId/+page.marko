@@ -1,9 +1,9 @@
-import { getLessonData, getLessonsList } from "@/lib/markdown.js";
-
-<!-- $global.params te da acceso a las variables de la ruta en Marko Run / Router -->
-<const/contentType = ($global.params.type || "courses")/> <!-- "courses" o "tutorials" -->
-<const/courseId = $global.params.courseId/>
+<const/type = $global.params.type/>
+<const/slug = $global.params.slug/>
 <const/lessonId = $global.params.lessonId/>
+<const/lesson = $global.lesson/>
+<const/lessons = ($global.lessons || [])/>
+
 <let/isContentOpen = false/>
 
 <const/getEmbedUrl = (url: any) => {
@@ -16,7 +16,7 @@ import { getLessonData, getLessonsList } from "@/lib/markdown.js";
         : url;
 }/>
 
-<await|lesson|=getLessonData(contentType, courseId, lessonId)>
+<if=(lesson)>
     <div class="w-full h-full flex overflow-hidden">
         <!-- BARRA LATERAL / NAVEGACIÓN -->
         <aside class=["w-full h-full fixed z-6 bg-white translate-x-full transition-transform duration-300 p-4", {
@@ -25,30 +25,32 @@ import { getLessonData, getLessonsList } from "@/lib/markdown.js";
         }]>
             <h3>Navegación del Contenido</h3>
 
-            <!-- Carga dinámica de lecciones desde la carpeta -->
-            <await|lessons|=getLessonsList(contentType, courseId)>
-                <ul>
-                    <for|item| of=lessons>
-                        <li>
-                            <a href=`/${contentType}/${courseId}/${item}`>${item}</a>
-                        </li>
-                    </for>
-                </ul>
-            </await>
+            <ul>
+                <for|item| of=lessons>
+                    <li>
+                        <a 
+                            href=`/${type}/${slug}/${item}`
+                            class=["hover:underline", item === lessonId ? "font-bold text-black" : ""]
+                        >
+                            -${item.replace(/-/g, " ")}
+                        </a>
+                    </li>
+                </for>
+            </ul>
         </aside>
 
-        <Button class="fixed z-8 bottom-10 right-10" callback() { isContentOpen = !isContentOpen }>
-           Contenido [╪]
-        </Button>
+        <button class="border-2 hover:scale-105! active:scale-105! transition-transform border-black cursor-pointer select-none px-2 bg-black text-white fixed z-8 bottom-10 right-10" onClick() { isContentOpen = !isContentOpen }>
+            Contenido [╪]
+        </button>
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="flex-1 p-4 overflow-y-auto">
-            <h1>${lesson.metadata.title}</h1>
+            <h1 class="text-3xl font-black mb-4">${lesson.metadata.title}</h1>
             
             <!-- Si la clase tiene un vídeo asignado en el frontmatter -->
-            <if=lesson.metadata.videoUrl>
+            <if=(lesson.metadata.videoUrl)>
                 <iframe
-                    class="w-full aspect-video"
+                    class="w-full aspect-video mb-6"
                     src=getEmbedUrl(lesson.metadata.videoUrl)
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -57,7 +59,10 @@ import { getLessonData, getLessonsList } from "@/lib/markdown.js";
             </if>
             
             <!-- CUERPO DE LA CLASE EN MARKDOWN (RENDERIZADO) -->
-            <article class="prose">$!{lesson.htmlContent}</article>
+            <article class="prose max-w-none">$!{lesson.htmlContent}</article>
         </main>
     </div>
-</await>
+</if>
+<else>
+    <div class="p-4">No se pudo cargar la lección solicitada.</div>
+</else>
