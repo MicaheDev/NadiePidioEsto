@@ -1,16 +1,19 @@
 import { defineConfig } from "vite";
 import markoRun from "@marko/run/vite";
 import tailwindcss from "@tailwindcss/vite";
-import mdx from "@mdx-js/rollup";
+import path from "node:path";
 
-/** @type {RollupOptions} */
+
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src")
+    }
+  },
   plugins: [
     markoRun(),
     tailwindcss(),
-    mdx({
-      /* jsxImportSource: …, otherOptions… */
-    }),
+
   ],
 
 

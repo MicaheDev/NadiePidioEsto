@@ -1,13 +1,16 @@
-<let/isMenuOpen=false>
+import { getCollectionList } from "@/lib/markdown.js";
+
+<let/isMenuOpen=false/>
+
 <div class=[
-  "fixed z-10 inset-0 w-full h-full bg-white -translate-x-full transition-transform duration-300",
+  "fixed z-10 inset-0 w-full h-full bg-white -translate-x-full transition-transform duration-300 overflow-y-auto",
   {
     "translate-x-0": isMenuOpen,
   },
 ]>
   <div
     aria-label="menu-header"
-    class="w-full h-[60px] px-4 flex items-center justify-between bg-white"
+    class="w-full h-[60px] px-4 flex items-center justify-between bg-white border-b-2 border-black"
   >
     <h2>Menu</h2>
     <div class="bg-black">
@@ -21,11 +24,50 @@
       </Button>
     </div>
   </div>
-  <div class="px-4">
-    <h2 class="text-2xl">Cursos</h2>
-    <h2 class="text-2xl">Tutoriales</h2>
+
+  <div class="p-4 space-y-6">
+    <!-- SECCIÓN DE CURSOS -->
+    <div>
+      <h2 class="text-2xl font-black mb-2">Cursos</h2>
+      <await|courses|=getCollectionList("courses")>
+        <ul class="space-y-1 pl-2">
+          <for|course| of=courses>
+            <li>
+              <a 
+                href=`/courses/${course}` 
+                class="hover:underline font-medium text-lg capitalize"
+                onClick() { isMenuOpen = false; }
+              >
+                ${course.replace(/-/g, " ")}
+              </a>
+            </li>
+          </for>
+        </ul>
+      </await>
+    </div>
+
+    <!-- SECCIÓN DE TUTORIALES -->
+    <div>
+      <h2 class="text-2xl font-black mb-2">Tutoriales</h2>
+      <await|tutorials|=getCollectionList("tutorials")>
+        <ul class="space-y-1 pl-2">
+          <for|tutorial| of=tutorials>
+            <li>
+              <a 
+                href=`/tutorials/${tutorial}` 
+                class="hover:underline font-medium text-lg capitalize"
+                onClick() { isMenuOpen = false; }
+              >
+                ${tutorial.replace(/-/g, " ")}
+              </a>
+            </li>
+          </for>
+        </ul>
+      </await>
+    </div>
   </div>
 </div>
+
 <header
   aria-label="main-header"
   class="w-full h-[60px] shrink-0 px-4 flex items-center justify-between bg-white border-b-2 border-black"

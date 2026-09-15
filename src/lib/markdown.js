@@ -14,8 +14,14 @@ import fauxOembedTransformer from '@remark-embedder/transformer-oembed';
 const remarkEmbedder = fauxRemarkEmbedder.default;
 const oembedTransformer = fauxOembedTransformer.default;
 
-export async function getLessonData(courseId, lessonId) {
-  const filePath = path.join(process.cwd(), 'src/content', courseId, `${lessonId}.md`);
+/**
+ * Obtiene el contenido HTML y metadatos de una lección específica.
+ * @param {'courses' | 'tutorials'} contentType - Tipo de contenido
+ * @param {string} slug - ID o carpeta del curso/tutorial
+ * @param {string} lessonId - ID del archivo de la lección (sin extensión .md)
+ */
+export async function getLessonData(contentType, slug, lessonId) {
+  const filePath = path.join(process.cwd(), 'src/content', contentType, slug, `${lessonId}.md`);
   const rawFile = await fs.readFile(filePath, 'utf-8');
 
   const { data: metadata, content: markdownContent } = matter(rawFile);
@@ -41,4 +47,35 @@ export async function getLessonData(courseId, lessonId) {
     metadata,
     htmlContent: String(processed)
   };
+}
+
+/**
+ * Obtiene la lista de carpetas (cursos o tutoriales existentes).
+ * @param {'courses' | 'tutorials'} contentType 
+ */
+export async function getCollectionList(contentType) {
+  const dirPath = path.join(process.cwd(), 'src/content', contentType);
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    return entries.filter(entry => entry.isDirectory()).map(dir => dir.name);
+  } catch (error) {
+    return [];
+  }
+}
+
+/**
+ * Obtiene la lista de lecciones (.md) de un curso o tutorial específico.
+ * @param {'courses' | 'tutorials'} contentType 
+ * @param {string} slug 
+ */
+export async function getLessonsList(contentType, slug) {
+  const dirPath = path.join(process.cwd(), 'src/content', contentType, slug);
+  try {
+    const files = await fs.readdir(dirPath);
+    return files
+      .filter(file => file.endsWith('.md'))
+      .map(file => file.replace(/\.md$/, ''));
+  } catch (error) {
+    return [];
+  }
 }

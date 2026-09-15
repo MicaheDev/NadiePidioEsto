@@ -1,0 +1,63 @@
+import { getLessonData, getLessonsList } from "@/lib/markdown.js";
+
+<!-- $global.params te da acceso a las variables de la ruta en Marko Run / Router -->
+<const/contentType = ($global.params.type || "tutorials")/>
+<const/tutorialId = $global.params.tutorialId/>
+<const/lessonId = $global.params.lessonId/>
+<let/isContentOpen = false/>
+
+<const/getEmbedUrl = (url: any) => {
+    if (!url) return "";
+    const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11
+        ? `https://www.youtube.com/embed/${match[2]}`
+        : url;
+}/>
+
+<await|lesson|=getLessonData(contentType, tutorialId, lessonId)>
+    <div class="w-full h-full flex overflow-hidden">
+        <!-- BARRA LATERAL / NAVEGACIÓN -->
+        <aside class=["w-full h-full fixed z-6 bg-white translate-x-full transition-transform duration-300 p-4", {
+            'translate-x-0': isContentOpen,
+            'translate-x-full': !isContentOpen
+        }]>
+            <h3>Navegación del Contenido</h3>
+
+            <!-- Carga dinámica de lecciones desde la carpeta del tutorial -->
+            <await|lessons|=getLessonsList(contentType, tutorialId)>
+                <ul>
+                    <for|item| of=lessons>
+                        <li>
+                            <a href=`/${contentType}/${tutorialId}/${item}`>${item}</a>
+                        </li>
+                    </for>
+                </ul>
+            </await>
+        </aside>
+
+        <Button class="fixed z-8 bottom-10 right-10" callback() { isContentOpen = !isContentOpen }>
+           Contenido [╪]
+        </Button>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 p-4 overflow-y-auto">
+            <h1>${lesson.metadata.title}</h1>
+            
+            <!-- Si la clase tiene un vídeo asignado en el frontmatter -->
+            <if=lesson.metadata.videoUrl>
+                <iframe
+                    class="w-full aspect-video"
+                    src=getEmbedUrl(lesson.metadata.videoUrl)
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                />
+            </if>
+            
+            <!-- CUERPO DE LA CLASE EN MARKDOWN (RENDERIZADO) -->
+            <article class="prose">$!{lesson.htmlContent}</article>
+        </main>
+    </div>
+</await>

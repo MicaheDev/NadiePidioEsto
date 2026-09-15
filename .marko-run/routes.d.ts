@@ -14,7 +14,8 @@ import type * as $ from "@marko/run";
 declare module "@marko/run" {
 	interface App extends $.DefineRoutes<{
 		"/": [L1, P1, D1];
-		"/cursos/$courseId/$lessonId": [L1, P2];
+		"/courses/$courseId/$lessonId": [L1, P2];
+		"/tutorials/$courseId/$lessonId": [L1, P3];
 	}> {}
 }
 
@@ -30,7 +31,7 @@ declare module "../src/routes/+layout.marko" {
   namespace MarkoRun {
     export { NotHandled, NotMatched, GetPaths, PostPaths, GetablePath, GetableHref, PostablePath, PostableHref, Platform };
     /** @deprecated use the `Run` namespace instead */
-    export type Route = $.Routes["/" | "/cursos/$courseId/$lessonId"];
+    export type Route = $.Routes["/" | "/courses/$courseId/$lessonId" | "/tutorials/$courseId/$lessonId"];
     /** @deprecated use `Run.Context` instead */
     export type Context = Run.Context;
     /** @deprecated define handlers with `Run.GET(...)`, `Run.POST(...)`, etc. instead */
@@ -89,8 +90,8 @@ declare module "../src/routes/+page.marko" {
   }
 }
 
-type P2 = $.Template<"P2", typeof import("../src/routes/cursos/$courseId/$lessonId/+page.marko")>;
-declare module "../src/routes/cursos/$courseId/$lessonId/+page.marko" {
+type P2 = $.Template<"P2", typeof import("../src/routes/courses/$courseId/$lessonId/+page.marko")>;
+declare module "../src/routes/courses/$courseId/$lessonId/+page.marko" {
   const Run: $.Namespace<P2>;
   namespace Run {
     type Context = $.ContextForFile<P2> & Marko.Global;
@@ -100,7 +101,42 @@ declare module "../src/routes/cursos/$courseId/$lessonId/+page.marko" {
   namespace MarkoRun {
     export { NotHandled, NotMatched, GetPaths, PostPaths, GetablePath, GetableHref, PostablePath, PostableHref, Platform };
     /** @deprecated use the `Run` namespace instead */
-    export type Route = $.Routes["/cursos/$courseId/$lessonId"];
+    export type Route = $.Routes["/courses/$courseId/$lessonId"];
+    /** @deprecated use `Run.Context` instead */
+    export type Context = Run.Context;
+    /** @deprecated define handlers with `Run.GET(...)`, `Run.POST(...)`, etc. instead */
+    export type Handler = $.HandlerLike<Route>;
+    /** @deprecated define handlers with `Run.GET(...)` instead */
+    export type GET = $.HandlerLike<Route, "GET">;
+    /** @deprecated define handlers with `Run.HEAD(...)` instead */
+    export type HEAD = $.HandlerLike<Route, "HEAD">;
+    /** @deprecated define handlers with `Run.POST(...)` instead */
+    export type POST = $.HandlerLike<Route, "POST">;
+    /** @deprecated define handlers with `Run.PUT(...)` instead */
+    export type PUT = $.HandlerLike<Route, "PUT">;
+    /** @deprecated define handlers with `Run.DELETE(...)` instead */
+    export type DELETE = $.HandlerLike<Route, "DELETE">;
+    /** @deprecated define handlers with `Run.PATCH(...)` instead */
+    export type PATCH = $.HandlerLike<Route, "PATCH">;
+    /** @deprecated define handlers with `Run.OPTIONS(...)` instead */
+    export type OPTIONS = $.HandlerLike<Route, "OPTIONS">;
+    /** @deprecated define handlers with `Run.QUERY(...)` instead */
+    export type QUERY = $.HandlerLike<Route, "QUERY">;
+  }
+}
+
+type P3 = $.Template<"P3", typeof import("../src/routes/tutorials/$courseId/$lessonId/+page.marko")>;
+declare module "../src/routes/tutorials/$courseId/$lessonId/+page.marko" {
+  const Run: $.Namespace<P3>;
+  namespace Run {
+    type Context = $.ContextForFile<P3> & Marko.Global;
+  }
+
+  /** @deprecated use `Run` namespace instead */
+  namespace MarkoRun {
+    export { NotHandled, NotMatched, GetPaths, PostPaths, GetablePath, GetableHref, PostablePath, PostableHref, Platform };
+    /** @deprecated use the `Run` namespace instead */
+    export type Route = $.Routes["/tutorials/$courseId/$lessonId"];
     /** @deprecated use `Run.Context` instead */
     export type Context = Run.Context;
     /** @deprecated define handlers with `Run.GET(...)`, `Run.POST(...)`, etc. instead */
